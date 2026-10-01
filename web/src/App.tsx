@@ -6,6 +6,8 @@ import { MasterStockPanel } from './components/MasterStockPanel';
 import { FleetStockPanel } from './components/FleetStockPanel';
 import { StockActivityFeed } from './components/StockActivityFeed';
 import { DeliveriesPanel } from './components/DeliveriesPanel';
+import { LoginPage } from './components/LoginPage';
+import { AdminPanel } from './components/AdminPanel';
 import { 
   Croissant, 
   Truck, 
@@ -13,9 +15,27 @@ import {
   TrendingUp, 
   RefreshCw, 
   CheckCircle2,
+  Shield,
+  LogOut,
+  User,
 } from 'lucide-react';
 
+interface AuthUser {
+  username: string;
+  role: string;
+}
+
 export function App() {
+  // Authentication state
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
+    try {
+      const stored = localStorage.getItem('crust_fleet_auth') || sessionStorage.getItem('crust_fleet_auth');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
   const [products, setProducts] = useState<Product[]>([]);
   const [masterStock, setMasterStock] = useState<MasterStock[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -25,9 +45,15 @@ export function App() {
   const [movements, setMovements] = useState<StockMovement[]>([]);
 
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'map' | 'master_stock' | 'fleet_stock' | 'deliveries'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'map' | 'master_stock' | 'fleet_stock' | 'deliveries' | 'admin'>('dashboard');
   const [isLoading, setIsLoading] = useState(true);
   const [realtimeStatus, setRealtimeStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
+
+  const handleLogout = () => {
+    localStorage.removeItem('crust_fleet_auth');
+    sessionStorage.removeItem('crust_fleet_auth');
+    setCurrentUser(null);
+  };
 
   // Fetch initial data
   const fetchData = useCallback(async () => {
@@ -85,12 +111,14 @@ export function App() {
   }, [selectedVehicleId]);
 
   useEffect(() => {
+    if (!currentUser) return;
+
     fetchData();
 
     // Setup Supabase Realtime channel subscription
     const channel = supabase
       .channel('bakery_realtime_hub')
-      // 1. Vehicle location & status updates
+      // 1. Vehicle updates
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'vehicles' },
@@ -99,8 +127,8 @@ export function App() {
             setVehicles((prev) =>
               prev.map((v) => (v.id === payload.new.id ? { ...v, ...payload.new } : v))
             );
-          } else if (payload.eventType === 'INSERT') {
-            setVehicles((prev) => [...prev, payload.new as Vehicle]);
+          } else {
+            fetchData();
           }
         }
       )
@@ -118,7 +146,23 @@ export function App() {
           }
         }
       )
-      // 3. Vehicle stock changes (on-road inventory)
+      // 3. Products changes
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products' },
+        () => {
+          fetchData();
+        }
+      )
+      // 4. Customers changes
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'customers' },
+        () => {
+          fetchData();
+        }
+      )
+      // 5. Vehicle stock changes
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'vehicle_stock' },
@@ -126,7 +170,7 @@ export function App() {
           fetchData();
         }
       )
-      // 4. New deliveries
+      // 6. Deliveries
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'deliveries' },
@@ -134,7 +178,7 @@ export function App() {
           fetchData();
         }
       )
-      // 5. Stock movements ledger
+      // 7. Stock movements
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'stock_movements' },
@@ -153,7 +197,12 @@ export function App() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [fetchData]);
+  }, [currentUser, fetchData]);
+
+  // If not authenticated, render Login Page
+  if (!currentUser) {
+    return <LoginPage onLoginSuccess={(user) => setCurrentUser(user)} />;
+  }
 
   // Aggregate stats
   const totalMasterStock = masterStock.reduce((sum, item) => sum + item.quantity, 0);
@@ -186,10 +235,10 @@ export function App() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 overflow-x-auto">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shrink-0 ${
                 activeTab === 'dashboard'
                   ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
@@ -199,7 +248,7 @@ export function App() {
             </button>
             <button
               onClick={() => setActiveTab('map')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shrink-0 ${
                 activeTab === 'map'
                   ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
@@ -209,7 +258,7 @@ export function App() {
             </button>
             <button
               onClick={() => setActiveTab('master_stock')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shrink-0 ${
                 activeTab === 'master_stock'
                   ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
@@ -219,7 +268,7 @@ export function App() {
             </button>
             <button
               onClick={() => setActiveTab('fleet_stock')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shrink-0 ${
                 activeTab === 'fleet_stock'
                   ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
@@ -229,7 +278,7 @@ export function App() {
             </button>
             <button
               onClick={() => setActiveTab('deliveries')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shrink-0 ${
                 activeTab === 'deliveries'
                   ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
                   : 'text-slate-600 hover:text-slate-900'
@@ -237,11 +286,24 @@ export function App() {
             >
               Deliveries
             </button>
+
+            {/* Admin Management Tab */}
+            <button
+              onClick={() => setActiveTab('admin')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shrink-0 ${
+                activeTab === 'admin'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-amber-800 bg-amber-100/60 hover:bg-amber-100 hover:text-amber-950'
+              }`}
+            >
+              <Shield className="w-3.5 h-3.5 text-amber-500" />
+              <span>Admin Center</span>
+            </button>
           </div>
 
-          {/* Status & Refresh */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200 text-xs shadow-xs">
+          {/* Status, User & Logout */}
+          <div className="flex items-center gap-2.5">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200 text-xs shadow-xs">
               <span className="relative flex h-2 w-2">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
                   realtimeStatus === 'connected' ? 'bg-emerald-400' : 'bg-amber-400'
@@ -251,7 +313,7 @@ export function App() {
                 }`}></span>
               </span>
               <span className="text-slate-700 font-medium">
-                {realtimeStatus === 'connected' ? 'Realtime Connected' : 'Syncing...'}
+                {realtimeStatus === 'connected' ? 'Live' : 'Syncing...'}
               </span>
             </div>
 
@@ -262,6 +324,22 @@ export function App() {
             >
               <RefreshCw className="w-4 h-4" />
             </button>
+
+            {/* User Session Profile & Logout */}
+            <div className="flex items-center gap-1.5 pl-1.5 border-l border-slate-200">
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 rounded-xl border border-slate-200 text-xs">
+                <User className="w-3.5 h-3.5 text-slate-500" />
+                <span className="font-bold text-slate-800 hidden md:inline">{currentUser.username}</span>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                title="Sign Out from HQ"
+                className="p-2 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl border border-slate-200 shadow-xs transition cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -308,7 +386,7 @@ export function App() {
             </div>
           </div>
 
-          {/* Today's Deliveries & Revenue (Warm Gold / Emerald Accent) */}
+          {/* Today's Deliveries & Revenue */}
           <div className="bg-white border border-slate-200 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-xs">
             <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
@@ -415,6 +493,16 @@ export function App() {
                   <StockActivityFeed movements={movements} />
                 </div>
               </div>
+            )}
+
+            {activeTab === 'admin' && (
+              <AdminPanel
+                vehicles={vehicles}
+                customers={customers}
+                products={products}
+                masterStock={masterStock}
+                onRefresh={fetchData}
+              />
             )}
           </>
         )}
