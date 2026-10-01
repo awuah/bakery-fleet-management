@@ -3,14 +3,36 @@ allprojects {
         google()
         mavenCentral()
     }
+    // Supply flutter properties to any plugins that evaluate flutter.compileSdkVersion
+    gradle.projectsLoaded {
+        rootProject.allprojects {
+            afterEvaluate { project ->
+                if (project.plugins.hasPlugin("com.android.library") || project.plugins.hasPlugin("com.android.application")) {
+                    project.android {
+                        compileSdkVersion 34
+                        buildToolsVersion "34.0.0"
+                    }
+                }
+            }
+        }
+    }
 }
 
 rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(":app")
+}
+
+subprojects {
+    project.ext {
+        flutter = [
+            compileSdkVersion: 34,
+            minSdkVersion: 21,
+            targetSdkVersion: 34,
+            ndkVersion: "26.3.11579264"
+        ]
+    }
 }
 
 tasks.register("clean", Delete) {

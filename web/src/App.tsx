@@ -163,36 +163,36 @@ export function App() {
   const activeVansCount = vehicles.filter((v) => v.status === 'on_route' || v.status === 'loading').length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
       {/* Top Navigation Bar */}
-      <header className="border-b border-slate-800/80 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 px-4 lg:px-8 py-3">
+      <header className="border-b border-slate-200 bg-white/90 backdrop-blur-md sticky top-0 z-50 px-4 lg:px-8 py-3 shadow-xs">
         <div className="flex flex-wrap items-center justify-between gap-4 max-w-7xl mx-auto">
           {/* Logo & Brand */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center shadow-md shadow-amber-500/20">
               <Croissant className="w-5 h-5 text-slate-950 stroke-[2.5]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-extrabold text-base lg:text-lg tracking-tight text-slate-100">
+                <h1 className="font-extrabold text-base lg:text-lg tracking-tight text-slate-900">
                   CRUST & FLEET
                 </h1>
-                <span className="text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full uppercase">
+                <span className="text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full uppercase">
                   Bakery HQ
                 </span>
               </div>
-              <p className="text-xs text-slate-400">Master Stock & Fleet Distribution Control</p>
+              <p className="text-xs text-slate-500">Master Stock & Fleet Distribution Control</p>
             </div>
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-1 bg-slate-950/70 p-1 rounded-xl border border-slate-800">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 activeTab === 'dashboard'
-                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Overview
@@ -201,8 +201,8 @@ export function App() {
               onClick={() => setActiveTab('map')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 activeTab === 'map'
-                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Live Radar
@@ -211,8 +211,8 @@ export function App() {
               onClick={() => setActiveTab('master_stock')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 activeTab === 'master_stock'
-                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Master Bakery
@@ -221,8 +221,8 @@ export function App() {
               onClick={() => setActiveTab('fleet_stock')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 activeTab === 'fleet_stock'
-                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Van Stock
@@ -231,8 +231,8 @@ export function App() {
               onClick={() => setActiveTab('deliveries')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 activeTab === 'deliveries'
-                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Deliveries
@@ -241,16 +241,16 @@ export function App() {
 
           {/* Status & Refresh */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-950 rounded-xl border border-slate-800 text-xs">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200 text-xs shadow-xs">
               <span className="relative flex h-2 w-2">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
                   realtimeStatus === 'connected' ? 'bg-emerald-400' : 'bg-amber-400'
                 }`}></span>
                 <span className={`relative inline-flex rounded-full h-2 w-2 ${
-                  realtimeStatus === 'connected' ? 'bg-emerald-500' : 'bg-amber-500'
+                  realtimeStatus === 'connected' ? 'bg-emerald-600' : 'bg-amber-500'
                 }`}></span>
               </span>
-              <span className="text-slate-300 font-medium">
+              <span className="text-slate-700 font-medium">
                 {realtimeStatus === 'connected' ? 'Realtime Connected' : 'Syncing...'}
               </span>
             </div>
@@ -258,7 +258,7 @@ export function App() {
             <button
               onClick={fetchData}
               title="Manual refresh"
-              className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition cursor-pointer"
+              className="p-2 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 rounded-xl border border-slate-200 shadow-xs transition cursor-pointer"
             >
               <RefreshCw className="w-4 h-4" />
             </button>
@@ -267,56 +267,56 @@ export function App() {
       </header>
 
       {/* KPI Stats Banner */}
-      <section className="border-b border-slate-800/60 bg-slate-900/30 px-4 lg:px-8 py-4">
+      <section className="border-b border-slate-200 bg-white/70 px-4 lg:px-8 py-4">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
           {/* Master Stock */}
-          <div className="bg-slate-900/90 border border-slate-800/80 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-md">
-            <div className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-              <Package className="w-5 h-5 text-amber-400" />
+          <div className="bg-white border border-slate-200 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-xs">
+            <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+              <Package className="w-5 h-5 text-amber-600" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Master Stock (HQ)</div>
-              <div className="text-xl font-black text-slate-100 mt-0.5">
-                {totalMasterStock.toLocaleString()} <span className="text-xs font-normal text-slate-400">units</span>
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Master Stock (HQ)</div>
+              <div className="text-xl font-black text-slate-900 mt-0.5">
+                {totalMasterStock.toLocaleString()} <span className="text-xs font-normal text-slate-500">units</span>
               </div>
             </div>
           </div>
 
           {/* Van Stock In-Transit */}
-          <div className="bg-slate-900/90 border border-slate-800/80 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-md">
-            <div className="w-11 h-11 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
-              <Truck className="w-5 h-5 text-sky-400" />
+          <div className="bg-white border border-slate-200 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-xs">
+            <div className="w-11 h-11 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center shrink-0">
+              <Truck className="w-5 h-5 text-sky-600" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">On-Road Transit</div>
-              <div className="text-xl font-black text-sky-400 mt-0.5">
-                {totalInTransitStock.toLocaleString()} <span className="text-xs font-normal text-slate-400">units</span>
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">On-Road Transit</div>
+              <div className="text-xl font-black text-sky-600 mt-0.5">
+                {totalInTransitStock.toLocaleString()} <span className="text-xs font-normal text-slate-500">units</span>
               </div>
             </div>
           </div>
 
           {/* Active Vans */}
-          <div className="bg-slate-900/90 border border-slate-800/80 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-md">
-            <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-              <TrendingUp className="w-5 h-5 text-emerald-400" />
+          <div className="bg-white border border-slate-200 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-xs">
+            <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
+              <TrendingUp className="w-5 h-5 text-emerald-600" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Active Fleet</div>
-              <div className="text-xl font-black text-emerald-400 mt-0.5">
-                {activeVansCount} / {vehicles.length} <span className="text-xs font-normal text-slate-400">vans</span>
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Active Fleet</div>
+              <div className="text-xl font-black text-emerald-600 mt-0.5">
+                {activeVansCount} / {vehicles.length} <span className="text-xs font-normal text-slate-500">vans</span>
               </div>
             </div>
           </div>
 
-          {/* Today's Deliveries & Revenue */}
-          <div className="bg-slate-900/90 border border-slate-800/80 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-md">
-            <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
-              <CheckCircle2 className="w-5 h-5 text-purple-400" />
+          {/* Today's Deliveries & Revenue (Warm Gold / Emerald Accent) */}
+          <div className="bg-white border border-slate-200 p-3.5 rounded-2xl flex items-center gap-3.5 shadow-xs">
+            <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
             </div>
             <div>
-              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Today's Deliveries</div>
-              <div className="text-xl font-black text-purple-400 mt-0.5">
-                {totalDeliveredToday} <span className="text-xs font-normal text-slate-400">drops (${totalRevenueToday.toFixed(0)})</span>
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Today's Deliveries</div>
+              <div className="text-xl font-black text-emerald-700 mt-0.5">
+                {totalDeliveredToday} <span className="text-xs font-normal text-slate-500">drops (${totalRevenueToday.toFixed(0)})</span>
               </div>
             </div>
           </div>
@@ -326,7 +326,7 @@ export function App() {
       {/* Main Content Areas */}
       <main className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
         {isLoading ? (
-          <div className="h-[60vh] flex flex-col items-center justify-center gap-3 text-slate-400">
+          <div className="h-[60vh] flex flex-col items-center justify-center gap-3 text-slate-500">
             <RefreshCw className="w-8 h-8 animate-spin text-amber-500" />
             <p className="text-sm font-medium">Connecting to Bakery Central Database...</p>
           </div>
@@ -421,7 +421,7 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-slate-900/60 px-4 py-3 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-200 bg-white px-4 py-3 text-center text-xs text-slate-500 shadow-xs">
         Bakery Production & Realtime Fleet Logistics • Connected to Supabase Realtime • Driver Android Companion Sync Active
       </footer>
     </div>

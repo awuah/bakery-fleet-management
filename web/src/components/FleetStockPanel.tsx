@@ -24,19 +24,19 @@ export const FleetStockPanel: React.FC<FleetStockPanelProps> = ({
   const deliveryRate = totalLoaded > 0 ? Math.round((totalDelivered / totalLoaded) * 100) : 0;
 
   return (
-    <div className="flex flex-col h-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+    <div className="flex flex-col h-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
       {/* Header */}
-      <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+      <div className="p-4 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <Truck className="w-5 h-5 text-sky-400" />
-            <h2 className="text-base font-bold text-slate-100">Fleet On-Road Stock</h2>
+            <Truck className="w-5 h-5 text-sky-600" />
+            <h2 className="text-base font-bold text-slate-900">Fleet On-Road Stock</h2>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">Real-time inventory inside delivery vans</p>
+          <p className="text-xs text-slate-500 mt-0.5">Real-time inventory inside delivery vans</p>
         </div>
 
         {/* Van Selector Switcher */}
-        <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-xs">
           {vehicles.map((v) => {
             const isSelected = (currentVehicle?.id === v.id);
             return (
@@ -45,8 +45,8 @@ export const FleetStockPanel: React.FC<FleetStockPanelProps> = ({
                 onClick={() => onSelectVehicle(v.id)}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
                   isSelected
-                    ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-sky-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {v.van_code}
@@ -59,75 +59,75 @@ export const FleetStockPanel: React.FC<FleetStockPanelProps> = ({
       {currentVehicle && (
         <>
           {/* Driver & Van Status Card */}
-          <div className="p-4 border-b border-slate-800 bg-slate-950/40">
+          <div className="p-4 border-b border-slate-200 bg-slate-50/50">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-amber-400">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center font-bold text-amber-700">
                   {currentVehicle.van_code.replace('VAN-', 'V')}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-sm text-slate-100">{currentVehicle.driver_name}</span>
+                    <span className="font-bold text-sm text-slate-900">{currentVehicle.driver_name}</span>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${
                       currentVehicle.status === 'on_route'
-                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                         : currentVehicle.status === 'loading'
-                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                        : 'bg-slate-700/40 text-slate-400 border-slate-700'
+                        ? 'bg-amber-50 text-amber-700 border-amber-200'
+                        : 'bg-slate-100 text-slate-600 border-slate-200'
                     }`}>
                       {currentVehicle.status.replace('_', ' ')}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
+                  <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
                     <span className="flex items-center gap-1">
-                      <Phone className="w-3 h-3 text-slate-500" />
+                      <Phone className="w-3 h-3 text-slate-400" />
                       {currentVehicle.driver_phone}
                     </span>
                     <span>•</span>
-                    <span className="font-mono text-slate-300">{currentVehicle.license_plate}</span>
+                    <span className="font-mono text-slate-700">{currentVehicle.license_plate}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 text-xs bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
-                <span className="flex items-center gap-1 text-slate-400">
-                  <Battery className="w-3.5 h-3.5 text-emerald-400" />
-                  <b className="text-slate-200">{currentVehicle.battery_level}%</b>
+              <div className="flex items-center gap-3 text-xs bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs">
+                <span className="flex items-center gap-1 text-slate-500">
+                  <Battery className="w-3.5 h-3.5 text-emerald-600" />
+                  <b className="text-slate-800">{currentVehicle.battery_level}%</b>
                 </span>
-                <span className="flex items-center gap-1 text-slate-400">
-                  <Compass className="w-3.5 h-3.5 text-sky-400" />
-                  <b className="text-slate-200">{currentVehicle.speed_kmh.toFixed(0)} km/h</b>
+                <span className="flex items-center gap-1 text-slate-500">
+                  <Compass className="w-3.5 h-3.5 text-sky-600" />
+                  <b className="text-slate-800">{currentVehicle.speed_kmh.toFixed(0)} km/h</b>
                 </span>
               </div>
             </div>
 
             {/* Quick KPI stats for this van */}
             <div className="grid grid-cols-3 gap-2.5">
-              <div className="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
-                <div className="text-[10px] text-slate-400 uppercase font-semibold">Loaded Today</div>
-                <div className="text-lg font-extrabold text-slate-100 mt-0.5">{totalLoaded} <span className="text-xs font-normal text-slate-400">pcs</span></div>
+              <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
+                <div className="text-[10px] text-slate-500 uppercase font-semibold">Loaded Today</div>
+                <div className="text-lg font-extrabold text-slate-900 mt-0.5">{totalLoaded} <span className="text-xs font-normal text-slate-500">pcs</span></div>
               </div>
 
-              <div className="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
-                <div className="text-[10px] text-emerald-400 uppercase font-semibold">Delivered</div>
-                <div className="text-lg font-extrabold text-emerald-400 mt-0.5">{totalDelivered} <span className="text-xs font-normal text-slate-400">pcs</span></div>
+              <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
+                <div className="text-[10px] text-emerald-700 uppercase font-semibold">Delivered</div>
+                <div className="text-lg font-extrabold text-emerald-600 mt-0.5">{totalDelivered} <span className="text-xs font-normal text-slate-500">pcs</span></div>
               </div>
 
-              <div className="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
-                <div className="text-[10px] text-amber-400 uppercase font-semibold">On-Board Now</div>
-                <div className="text-lg font-extrabold text-amber-400 mt-0.5">{totalRemaining} <span className="text-xs font-normal text-slate-400">pcs</span></div>
+              <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
+                <div className="text-[10px] text-amber-700 uppercase font-semibold">On-Board Now</div>
+                <div className="text-lg font-extrabold text-amber-600 mt-0.5">{totalRemaining} <span className="text-xs font-normal text-slate-500">pcs</span></div>
               </div>
             </div>
 
             {/* Progress Bar */}
             <div className="mt-3">
               <div className="flex justify-between text-[11px] mb-1">
-                <span className="text-slate-400">Delivery Completion Progress</span>
-                <span className="font-bold text-sky-400">{deliveryRate}%</span>
+                <span className="text-slate-500">Delivery Completion Progress</span>
+                <span className="font-bold text-sky-700">{deliveryRate}%</span>
               </div>
-              <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+              <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-gradient-to-r from-sky-500 to-emerald-400 h-2 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-sky-500 to-emerald-500 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${deliveryRate}%` }}
                 />
               </div>
@@ -137,36 +137,36 @@ export const FleetStockPanel: React.FC<FleetStockPanelProps> = ({
           {/* Product stock breakdown for this van */}
           <div className="flex-1 overflow-y-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/60 sticky top-0 text-slate-400 font-semibold border-b border-slate-800">
+              <thead className="bg-slate-50 sticky top-0 text-slate-600 font-semibold border-b border-slate-200">
                 <tr>
                   <th className="py-2.5 px-3">Product</th>
                   <th className="py-2.5 px-2 text-center">Loaded</th>
-                  <th className="py-2.5 px-2 text-center text-emerald-400">Delivered</th>
-                  <th className="py-2.5 px-3 text-right text-amber-400">Remaining</th>
+                  <th className="py-2.5 px-2 text-center text-emerald-700">Delivered</th>
+                  <th className="py-2.5 px-3 text-right text-amber-700">Remaining</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-slate-100">
                 {currentStocks.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="text-center py-8 text-slate-500 text-xs">
+                    <td colSpan={4} className="text-center py-8 text-slate-400 text-xs">
                       No stock currently assigned to this vehicle.
                     </td>
                   </tr>
                 ) : (
                   currentStocks.map((stock) => (
-                    <tr key={stock.id} className="hover:bg-slate-800/40 transition">
+                    <tr key={stock.id} className="hover:bg-slate-50 transition">
                       <td className="py-2.5 px-3">
-                        <div className="font-semibold text-slate-100">{stock.product?.name}</div>
-                        <div className="text-[10px] text-slate-400 font-mono">{stock.product?.sku}</div>
+                        <div className="font-semibold text-slate-900">{stock.product?.name}</div>
+                        <div className="text-[10px] text-slate-500 font-mono">{stock.product?.sku}</div>
                       </td>
-                      <td className="py-2.5 px-2 text-center font-medium text-slate-300">
+                      <td className="py-2.5 px-2 text-center font-medium text-slate-700">
                         {stock.loaded_quantity}
                       </td>
-                      <td className="py-2.5 px-2 text-center font-bold text-emerald-400">
+                      <td className="py-2.5 px-2 text-center font-bold text-emerald-600">
                         {stock.delivered_quantity}
                       </td>
                       <td className="py-2.5 px-3 text-right">
-                        <span className="font-extrabold text-sm text-amber-400">
+                        <span className="font-extrabold text-sm text-amber-600">
                           {stock.current_quantity}
                         </span>
                       </td>
