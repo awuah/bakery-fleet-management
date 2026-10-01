@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
-        android:label="Crust & Fleet Driver"
+        android:label="Crust &amp; Fleet Driver"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
