@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import type { Vehicle, Customer } from '../types/bakery';
-import { Truck, Navigation, MapPin } from 'lucide-react';
+import { Truck, Navigation } from 'lucide-react';
 
 interface FleetMapProps {
   vehicles: Vehicle[];
@@ -279,14 +279,6 @@ export const FleetMap: React.FC<FleetMapProps> = ({
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-sky-600 inline-block"></span> Customer
           </span>
-        </div>
-
-        {/* OpenStreetMap Zero Cost Badge */}
-        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500 font-medium">
-          <div className="flex items-center gap-1 text-emerald-700 font-bold">
-            <MapPin className="w-3 h-3 text-emerald-600" />
-            <span>OpenStreetMap • Zero API Fees</span>
-          </div>
         </div>
       </div>
 
