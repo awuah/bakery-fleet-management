@@ -50,12 +50,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     }, 350);
   };
 
-  const handleFillDemo = () => {
-    setUsername(ADMIN_CREDENTIALS.username);
-    setPassword(ADMIN_CREDENTIALS.password);
-    setError(null);
-  };
-
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8 font-sans selection:bg-amber-500 selection:text-slate-950">
       {/* Background ambient lighting - Warm Amber & Emerald Only (NO PURPLE) */}
@@ -179,28 +173,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Helper */}
-          <div className="mt-6 pt-5 border-t border-slate-100">
-            <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-3.5">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-900">
-                  Authorized Admin Access
-                </span>
-                <button
-                  type="button"
-                  onClick={handleFillDemo}
-                  className="text-[11px] font-bold text-amber-700 hover:text-amber-900 underline underline-offset-2 cursor-pointer"
-                >
-                  Auto-Fill
-                </button>
-              </div>
-              <div className="text-xs text-slate-700 space-y-0.5">
-                <div><span className="font-semibold text-slate-500">User:</span> <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-amber-200 font-bold text-slate-900">{ADMIN_CREDENTIALS.username}</code></div>
-                <div><span className="font-semibold text-slate-500">Pass:</span> <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-amber-200 font-bold text-slate-900">{ADMIN_CREDENTIALS.password}</code></div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Security Footer */}
