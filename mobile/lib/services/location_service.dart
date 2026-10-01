@@ -12,59 +12,74 @@ class LocationService {
   bool _isTracking = false;
   bool get isTracking => _isTracking;
 
-  // Waypoints for test driving simulation around delivery route
+  // Accra, Ghana delivery route waypoints
   final List<List<double>> _simulationWaypoints = [
-    [51.5134, -0.1180],
-    [51.5142, -0.1210],
-    [51.5120, -0.1230], // Sunrise Cafe
-    [51.5152, -0.1270],
-    [51.5165, -0.1195], // Corner Baker
-    [51.5180, -0.1240],
-    [51.5205, -0.1320], // Soho Square
-    [51.5218, -0.1342], // FreshMart Central
-    [51.5170, -0.1250],
-    [51.5060, -0.0950], // Harbor View
+    [5.6037, -0.1870], // HQ / Ridge Accra
+    [5.5560, -0.1963], // Makola Market
+    [5.5600, -0.1700], // Osu Oxford Street
+    [5.5800, -0.1720], // Cantonments
+    [5.6000, -0.1750], // Airport Residential
+    [5.6200, -0.1600], // East Legon
+    [5.6350, -0.1550], // American House
+    [5.6500, -0.1800], // Madina
+    [5.6400, -0.1900], // Legon University Campus
+    [5.6100, -0.1950], // Dzorwulu
   ];
   int _waypointIndex = 0;
 
   Future<bool> checkPermissions() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      debugPrint('Location service disabled on device. Requesting settings.');
+      await Geolocator.openLocationSettings();
       return false;
     }
 
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
+      debugPrint('Requesting location permission...');
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
+        debugPrint('Location permission denied by user.');
         return false;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
+      debugPrint('Location permission permanently denied. Directing to app settings.');
+      await Geolocator.openAppSettings();
       return false;
     }
 
     return true;
   }
 
-  void startLiveTracking({
+  Future<void> startLiveTracking({
     required String vehicleId,
-    bool simulate = true,
+    bool simulate = false,
     Function(double lat, double lng)? onLocationPushed,
-  }) {
+    Function(String error)? onError,
+  }) async {
     if (_isTracking) return;
     _isTracking = true;
 
-    // Push initial location immediately
-    _pushUpdate(vehicleId, simulate, onLocationPushed);
+    if (!simulate) {
+      final hasPermission = await checkPermissions();
+      if (!hasPermission) {
+        _isTracking = false;
+        if (onError != null) {
+          onError('Location permission denied or GPS service disabled on device.');
+        }
+        return;
+      }
+    }
 
-    // Stream every 5 seconds
-    _trackingTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      _pushUpdate(vehicleId, simulate, onLocationPushed);
+    // Push initial location immediately
+    await _pushUpdate(vehicleId, simulate, onLocationPushed);
+
+    // Stream updates every 5 seconds
+    _trackingTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
+      await _pushUpdate(vehicleId, simulate, onLocationPushed);
     });
   }
 
@@ -79,12 +94,12 @@ class LocationService {
     bool simulate,
     Function(double lat, double lng)? onLocationPushed,
   ) async {
-    double lat = 51.5134;
-    double lng = -0.1180;
-    double speed = 28.5;
+    double lat = 5.6037;
+    double lng = -0.1870;
+    double speed = 0.0;
 
     if (simulate) {
-      // Cycle through delivery waypoints
+      // Cycle through delivery waypoints in Accra
       final wp = _simulationWaypoints[_waypointIndex % _simulationWaypoints.length];
       lat = wp[0] + (0.0002 * (_waypointIndex % 3));
       lng = wp[1] + (0.0002 * (_waypointIndex % 2));
@@ -95,14 +110,22 @@ class LocationService {
         final position = await Geolocator.getCurrentPosition(
           locationSettings: const LocationSettings(
             accuracy: LocationAccuracy.high,
-            timeLimit: Duration(seconds: 4),
+            timeLimit: Duration(seconds: 6),
           ),
         );
         lat = position.latitude;
         lng = position.longitude;
-        speed = position.speed * 3.6; // m/s to km/h
+        speed = position.speed >= 0 ? (position.speed * 3.6) : 0.0;
       } catch (e) {
-        debugPrint('Device GPS fetch fallback to simulated: $e');
+        debugPrint('Error reading device GPS, attempting last known location: $e');
+        try {
+          final lastPos = await Geolocator.getLastKnownPosition();
+          if (lastPos != null) {
+            lat = lastPos.latitude;
+            lng = lastPos.longitude;
+            speed = lastPos.speed >= 0 ? (lastPos.speed * 3.6) : 0.0;
+          }
+        } catch (_) {}
       }
     }
 
@@ -111,7 +134,7 @@ class LocationService {
       await supabase.from('bk_vehicles').update({
         'current_lat': lat,
         'current_lng': lng,
-        'speed_kmh': speed,
+        'speed_kmh': double.parse(speed.toStringAsFixed(1)),
         'status': 'on_route',
         'last_location_update': DateTime.now().toIso8601String(),
       }).eq('id', vehicleId);

@@ -3,6 +3,7 @@ class Vehicle {
   final String vanCode;
   final String driverName;
   final String driverPhone;
+  final String driverPin;
   final String licensePlate;
   final String status;
   final double currentLat;
@@ -15,6 +16,7 @@ class Vehicle {
     required this.vanCode,
     required this.driverName,
     required this.driverPhone,
+    required this.driverPin,
     required this.licensePlate,
     required this.status,
     required this.currentLat,
@@ -29,10 +31,11 @@ class Vehicle {
       vanCode: json['van_code'] ?? '',
       driverName: json['driver_name'] ?? '',
       driverPhone: json['driver_phone'] ?? '',
+      driverPin: json['driver_pin']?.toString() ?? '1234',
       licensePlate: json['license_plate'] ?? '',
       status: json['status'] ?? 'idle',
-      currentLat: (json['current_lat'] as num?)?.toDouble() ?? 51.5074,
-      currentLng: (json['current_lng'] as num?)?.toDouble() ?? -0.1278,
+      currentLat: (json['current_lat'] as num?)?.toDouble() ?? 5.6037,
+      currentLng: (json['current_lng'] as num?)?.toDouble() ?? -0.1870,
       speedKmh: (json['speed_kmh'] as num?)?.toDouble() ?? 0.0,
       batteryLevel: (json['battery_level'] as num?)?.toInt() ?? 100,
     );

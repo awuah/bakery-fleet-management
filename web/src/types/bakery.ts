@@ -22,6 +22,7 @@ export interface Vehicle {
   van_code: string;
   driver_name: string;
   driver_phone: string;
+  driver_pin: string;
   license_plate: string;
   status: 'idle' | 'loading' | 'on_route' | 'returned' | 'maintenance';
   current_lat: number;

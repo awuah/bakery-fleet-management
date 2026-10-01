@@ -22,6 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
   bool _isGpsActive = false;
   String _lastGpsPingTime = 'Not started';
+  String _currentGpsCoordinates = '';
+  String? _gpsStatusMessage;
 
   @override
   void initState() {
@@ -30,18 +32,40 @@ class _HomeScreenState extends State<HomeScreen> {
     _autoStartTracking();
   }
 
-  void _autoStartTracking() {
-    // Automatically start location beacon for the driver
+  Future<void> _autoStartTracking() async {
+    // Automatically start live GPS broadcasting for the driver
     setState(() => _isGpsActive = true);
-    _locationService.startLiveTracking(
+    await _locationService.startLiveTracking(
       vehicleId: widget.vehicle.id,
-      simulate: true,
+      simulate: false,
       onLocationPushed: (lat, lng) {
         if (mounted) {
           setState(() {
             _lastGpsPingTime =
                 '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}';
+            _currentGpsCoordinates = '${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)}';
+            _gpsStatusMessage = null;
           });
+        }
+      },
+      onError: (err) {
+        if (mounted) {
+          setState(() {
+            _isGpsActive = false;
+            _gpsStatusMessage = err;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(err),
+              backgroundColor: Colors.redAccent,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Retry',
+                textColor: Colors.white,
+                onPressed: _toggleGpsTracking,
+              ),
+            ),
+          );
         }
       },
     );
@@ -79,24 +103,40 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _toggleGpsTracking() {
+  Future<void> _toggleGpsTracking() async {
     if (_isGpsActive) {
       _locationService.stopLiveTracking();
       setState(() => _isGpsActive = false);
     } else {
-      _locationService.startLiveTracking(
+      setState(() => _isGpsActive = true);
+      await _locationService.startLiveTracking(
         vehicleId: widget.vehicle.id,
-        simulate: true,
+        simulate: false,
         onLocationPushed: (lat, lng) {
           if (mounted) {
             setState(() {
               _lastGpsPingTime =
                   '${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}';
+              _currentGpsCoordinates = '${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)}';
+              _gpsStatusMessage = null;
             });
           }
         },
+        onError: (err) {
+          if (mounted) {
+            setState(() {
+              _isGpsActive = false;
+              _gpsStatusMessage = err;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(err),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+          }
+        },
       );
-      setState(() => _isGpsActive = true);
     }
   }
 
@@ -225,11 +265,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   const SizedBox(height: 2),
                                   Text(
                                     _isGpsActive
-                                        ? 'Last HQ sync ping: $_lastGpsPingTime'
-                                        : 'Tap toggle to stream route to HQ map',
+                                        ? (_currentGpsCoordinates.isNotEmpty
+                                            ? 'GPS: $_currentGpsCoordinates • Sync: $_lastGpsPingTime'
+                                            : 'Acquiring GPS fix... • Sync: $_lastGpsPingTime')
+                                        : (_gpsStatusMessage ?? 'Tap toggle to stream route to HQ map'),
                                     style: TextStyle(
-                                      color: Colors.grey[400],
+                                      color: _isGpsActive
+                                          ? const Color(0xFF6EE7B7)
+                                          : (_gpsStatusMessage != null ? Colors.redAccent : Colors.grey[400]),
                                       fontSize: 11,
+                                      fontFamily: _currentGpsCoordinates.isNotEmpty ? 'monospace' : null,
                                     ),
                                   ),
                                 ],
