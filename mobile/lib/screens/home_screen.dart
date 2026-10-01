@@ -56,13 +56,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _fetchData() async {
     try {
       final custResponse = await Supabase.instance.client
-          .from('customers')
+          .from('bk_customers')
           .select()
           .order('name');
 
       final stockResponse = await Supabase.instance.client
-          .from('vehicle_stock')
-          .select('*, product:products(*)')
+          .from('bk_vehicle_stock')
+          .select('*, product:bk_products(*)')
           .eq('vehicle_id', widget.vehicle.id);
 
       setState(() {

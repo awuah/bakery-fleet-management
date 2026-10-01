@@ -75,7 +75,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
           .toList();
 
       final response = await Supabase.instance.client.rpc(
-        'record_van_delivery',
+        'bk_record_van_delivery',
         params: {
           'p_vehicle_id': widget.vehicle.id,
           'p_customer_id': widget.customer.id,

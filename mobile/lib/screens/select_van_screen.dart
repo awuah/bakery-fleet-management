@@ -23,7 +23,7 @@ class _SelectVanScreenState extends State<SelectVanScreen> {
   Future<void> _fetchVehicles() async {
     try {
       final response = await Supabase.instance.client
-          .from('vehicles')
+          .from('bk_vehicles')
           .select()
           .order('van_code');
       setState(() {

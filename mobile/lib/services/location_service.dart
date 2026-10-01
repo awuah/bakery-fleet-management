@@ -108,7 +108,7 @@ class LocationService {
 
     try {
       final supabase = Supabase.instance.client;
-      await supabase.from('vehicles').update({
+      await supabase.from('bk_vehicles').update({
         'current_lat': lat,
         'current_lng': lng,
         'speed_kmh': speed,
@@ -126,7 +126,7 @@ class LocationService {
 
   Future<void> sendSinglePing(String vehicleId, double lat, double lng) async {
     final supabase = Supabase.instance.client;
-    await supabase.from('vehicles').update({
+    await supabase.from('bk_vehicles').update({
       'current_lat': lat,
       'current_lng': lng,
       'last_location_update': DateTime.now().toIso8601String(),

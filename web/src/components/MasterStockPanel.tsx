@@ -51,7 +51,7 @@ export const MasterStockPanel: React.FC<MasterStockPanelProps> = ({
     setIsSubmittingProd(true);
 
     try {
-      const { error } = await supabase.rpc('record_production_run', {
+      const { error } = await supabase.rpc('bk_record_production_run', {
         p_product_id: prodProductId,
         p_quantity: prodQuantity,
         p_notes: prodNotes || 'Fresh oven batch',
@@ -89,7 +89,7 @@ export const MasterStockPanel: React.FC<MasterStockPanelProps> = ({
         },
       ];
 
-      const { error } = await supabase.rpc('transfer_to_van', {
+      const { error } = await supabase.rpc('bk_transfer_to_van', {
         p_vehicle_id: dispVehicleId,
         p_items: itemsPayload,
         p_notes: dispNotes || 'Morning replenishment',

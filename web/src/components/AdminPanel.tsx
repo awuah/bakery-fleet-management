@@ -120,7 +120,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       if (editingVehicle) {
         // Update
         const { error } = await supabase
-          .from('vehicles')
+          .from('bk_vehicles')
           .update({
             van_code: vehicleForm.van_code.trim().toUpperCase(),
             driver_name: vehicleForm.driver_name.trim(),
@@ -134,7 +134,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         showFeedback('success', `Vehicle ${vehicleForm.van_code} updated successfully`);
       } else {
         // Create new van
-        const { error } = await supabase.from('vehicles').insert([
+        const { error } = await supabase.from('bk_vehicles').insert([
           {
             van_code: vehicleForm.van_code.trim().toUpperCase(),
             driver_name: vehicleForm.driver_name.trim(),
@@ -166,7 +166,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     if (!window.confirm(`Are you sure you want to decommission van ${veh.van_code} (${veh.driver_name})?`)) return;
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('vehicles').delete().eq('id', veh.id);
+      const { error } = await supabase.from('bk_vehicles').delete().eq('id', veh.id);
       if (error) throw error;
       showFeedback('success', `Vehicle ${veh.van_code} decommissioned`);
       onRefresh();
@@ -213,7 +213,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     try {
       if (editingCustomer) {
         const { error } = await supabase
-          .from('customers')
+          .from('bk_customers')
           .update({
             name: customerForm.name.trim(),
             contact_person: customerForm.contact_person.trim() || null,
@@ -227,7 +227,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         if (error) throw error;
         showFeedback('success', `Customer ${customerForm.name} updated successfully`);
       } else {
-        const { error } = await supabase.from('customers').insert([
+        const { error } = await supabase.from('bk_customers').insert([
           {
             name: customerForm.name.trim(),
             contact_person: customerForm.contact_person.trim() || null,
@@ -255,7 +255,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     if (!window.confirm(`Are you sure you want to remove customer "${cust.name}"?`)) return;
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('customers').delete().eq('id', cust.id);
+      const { error } = await supabase.from('bk_customers').delete().eq('id', cust.id);
       if (error) throw error;
       showFeedback('success', `Customer "${cust.name}" removed`);
       onRefresh();
@@ -304,7 +304,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       if (editingProduct) {
         // Update product metadata
         const { error: prodErr } = await supabase
-          .from('products')
+          .from('bk_products')
           .update({
             name: productForm.name.trim(),
             sku: productForm.sku.trim().toUpperCase(),
@@ -317,7 +317,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
         // Update threshold on master stock
         await supabase
-          .from('master_stock')
+          .from('bk_master_stock')
           .update({
             low_stock_threshold: Number(productForm.low_stock_threshold),
             updated_at: new Date().toISOString(),
@@ -328,7 +328,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       } else {
         // Create product
         const { data: newProd, error: prodErr } = await supabase
-          .from('products')
+          .from('bk_products')
           .insert([
             {
               name: productForm.name.trim(),
@@ -343,7 +343,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         if (prodErr) throw prodErr;
 
         // Create master stock entry
-        const { error: stockErr } = await supabase.from('master_stock').insert([
+        const { error: stockErr } = await supabase.from('bk_master_stock').insert([
           {
             product_id: newProd.id,
             quantity: Number(productForm.initial_stock) || 0,
@@ -356,7 +356,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
         // Log movement
         if (Number(productForm.initial_stock) > 0) {
-          await supabase.from('stock_movements').insert([
+          await supabase.from('bk_stock_movements').insert([
             {
               movement_type: 'PRODUCTION_ADD',
               product_id: newProd.id,
@@ -384,7 +384,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     if (!window.confirm(`Are you sure you want to delete product "${prod.name}" and remove all its inventory?`)) return;
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('products').delete().eq('id', prod.id);
+      const { error } = await supabase.from('bk_products').delete().eq('id', prod.id);
       if (error) throw error;
       showFeedback('success', `Product "${prod.name}" removed from bakery catalog`);
       onRefresh();
@@ -414,7 +414,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     try {
       const diff = newStockQty - adjustingStockItem.currentQty;
       const { error } = await supabase
-        .from('master_stock')
+        .from('bk_master_stock')
         .update({
           quantity: newStockQty,
           updated_at: new Date().toISOString(),
@@ -425,7 +425,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
       // Log movement if changed
       if (diff !== 0) {
-        await supabase.from('stock_movements').insert([
+        await supabase.from('bk_stock_movements').insert([
           {
             movement_type: diff > 0 ? 'PRODUCTION_ADD' : 'WASTAGE_ADJUSTMENT',
             product_id: adjustingStockItem.product.id,

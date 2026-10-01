@@ -59,18 +59,18 @@ export function App() {
   const fetchData = useCallback(async () => {
     try {
       // Products
-      const { data: prods } = await supabase.from('products').select('*').order('name');
+      const { data: prods } = await supabase.from('bk_products').select('*').order('name');
       if (prods) setProducts(prods);
 
       // Master Stock
       const { data: mStock } = await supabase
-        .from('master_stock')
-        .select('*, product:products(*)')
+        .from('bk_master_stock')
+        .select('*, product:bk_products(*)')
         .order('quantity', { ascending: false });
       if (mStock) setMasterStock(mStock);
 
       // Vehicles
-      const { data: vehs } = await supabase.from('vehicles').select('*').order('van_code');
+      const { data: vehs } = await supabase.from('bk_vehicles').select('*').order('van_code');
       if (vehs) {
         setVehicles(vehs);
         if (vehs.length > 0 && !selectedVehicleId) {
@@ -80,26 +80,26 @@ export function App() {
 
       // Vehicle Stock
       const { data: vStock } = await supabase
-        .from('vehicle_stock')
-        .select('*, product:products(*), vehicle:vehicles(*)');
+        .from('bk_vehicle_stock')
+        .select('*, product:bk_products(*), vehicle:bk_vehicles(*)');
       if (vStock) setVehicleStock(vStock);
 
       // Customers
-      const { data: custs } = await supabase.from('customers').select('*').order('name');
+      const { data: custs } = await supabase.from('bk_customers').select('*').order('name');
       if (custs) setCustomers(custs);
 
       // Deliveries
       const { data: dels } = await supabase
-        .from('deliveries')
-        .select('*, vehicle:vehicles(*), customer:customers(*)')
+        .from('bk_deliveries')
+        .select('*, vehicle:bk_vehicles(*), customer:bk_customers(*)')
         .order('delivered_at', { ascending: false })
         .limit(25);
       if (dels) setDeliveries(dels);
 
       // Movements
       const { data: movs } = await supabase
-        .from('stock_movements')
-        .select('*, product:products(*)')
+        .from('bk_stock_movements')
+        .select('*, product:bk_products(*)')
         .order('created_at', { ascending: false })
         .limit(40);
       if (movs) setMovements(movs);
@@ -121,7 +121,7 @@ export function App() {
       // 1. Vehicle updates
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'vehicles' },
+        { event: '*', schema: 'public', table: 'bk_vehicles' },
         (payload) => {
           if (payload.eventType === 'UPDATE') {
             setVehicles((prev) =>
@@ -135,7 +135,7 @@ export function App() {
       // 2. Master stock changes
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'master_stock' },
+        { event: '*', schema: 'public', table: 'bk_master_stock' },
         (payload) => {
           if (payload.eventType === 'UPDATE') {
             setMasterStock((prev) =>
@@ -149,7 +149,7 @@ export function App() {
       // 3. Products changes
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'products' },
+        { event: '*', schema: 'public', table: 'bk_products' },
         () => {
           fetchData();
         }
@@ -157,7 +157,7 @@ export function App() {
       // 4. Customers changes
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'customers' },
+        { event: '*', schema: 'public', table: 'bk_customers' },
         () => {
           fetchData();
         }
@@ -165,7 +165,7 @@ export function App() {
       // 5. Vehicle stock changes
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'vehicle_stock' },
+        { event: '*', schema: 'public', table: 'bk_vehicle_stock' },
         () => {
           fetchData();
         }
@@ -173,7 +173,7 @@ export function App() {
       // 6. Deliveries
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'deliveries' },
+        { event: 'INSERT', schema: 'public', table: 'bk_deliveries' },
         () => {
           fetchData();
         }
@@ -181,7 +181,7 @@ export function App() {
       // 7. Stock movements
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'stock_movements' },
+        { event: 'INSERT', schema: 'public', table: 'bk_stock_movements' },
         () => {
           fetchData();
         }

@@ -25,8 +25,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
   Future<void> _fetchVanStock() async {
     try {
       final response = await Supabase.instance.client
-          .from('vehicle_stock')
-          .select('*, product:products(*)')
+          .from('bk_vehicle_stock')
+          .select('*, product:bk_products(*)')
           .eq('vehicle_id', widget.vehicle.id);
 
       setState(() {
@@ -46,7 +46,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
         .onPostgresChanges(
           event: PostgresChangeEvent.all,
           schema: 'public',
-          table: 'vehicle_stock',
+          table: 'bk_vehicle_stock',
           callback: (payload) {
             _fetchVanStock();
           },
