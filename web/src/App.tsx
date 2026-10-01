@@ -394,7 +394,7 @@ export function App() {
             <div>
               <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Today's Deliveries</div>
               <div className="text-xl font-black text-emerald-700 mt-0.5">
-                {totalDeliveredToday} <span className="text-xs font-normal text-slate-500">drops (${totalRevenueToday.toFixed(0)})</span>
+                {totalDeliveredToday} <span className="text-xs font-normal text-slate-500">drops (GH₵{totalRevenueToday.toFixed(0)})</span>
               </div>
             </div>
           </div>

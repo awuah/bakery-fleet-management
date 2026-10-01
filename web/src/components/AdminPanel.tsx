@@ -17,7 +17,6 @@ import {
   AlertTriangle,
   RefreshCw,
   Sliders,
-  DollarSign,
   User,
   Shield
 } from 'lucide-react';
@@ -845,7 +844,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                           </span>
                         </td>
                         <td className="py-3 px-4 font-mono font-bold text-slate-900">
-                          ${Number(prod.unit_price).toFixed(2)}
+                          GH₵{Number(prod.unit_price).toFixed(2)}
                         </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
@@ -1228,10 +1227,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                    Unit Price ($)
+                    Unit Price (GH₵)
                   </label>
                   <div className="relative">
-                    <DollarSign className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <span className="text-[11px] font-bold absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500">
+                      GH₵
+                    </span>
                     <input
                       type="number"
                       step="0.01"
@@ -1239,7 +1240,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       required
                       value={productForm.unit_price}
                       onChange={(e) => setProductForm({ ...productForm, unit_price: parseFloat(e.target.value) || 0 })}
-                      className="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                      className="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
                     />
                   </div>
                 </div>

@@ -204,7 +204,7 @@ export const MasterStockPanel: React.FC<MasterStockPanelProps> = ({
                     <span className="text-[10px] text-slate-500 ml-1">units</span>
                   </td>
                   <td className="py-2.5 px-2 text-right font-medium text-slate-700">
-                    ${item.product?.unit_price.toFixed(2)}
+                    GH₵{item.product?.unit_price.toFixed(2)}
                   </td>
                   <td className="py-2.5 px-3 text-center">
                     {isLow ? (

@@ -134,7 +134,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                   style: const TextStyle(color: Colors.white70),
                 ),
                 Text(
-                  'Total Value: \$${_totalDeliveredValue.toStringAsFixed(2)}',
+                  'Total Value: GH₵${_totalDeliveredValue.toStringAsFixed(2)}',
                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
@@ -300,7 +300,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          '\$${(prod?.unitPrice ?? 0).toStringAsFixed(2)} / unit',
+                                          'GH₵${(prod?.unitPrice ?? 0).toStringAsFixed(2)} / unit',
                                           style: const TextStyle(
                                             color: Color(0xFF34D399),
                                             fontSize: 12,
@@ -433,7 +433,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                             style: TextStyle(color: Colors.grey[400], fontSize: 12),
                           ),
                           Text(
-                            '\$${_totalDeliveredValue.toStringAsFixed(2)}',
+                            'GH₵${_totalDeliveredValue.toStringAsFixed(2)}',
                             style: const TextStyle(
                               color: Color(0xFF10B981),
                               fontSize: 20,

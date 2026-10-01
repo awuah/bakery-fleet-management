@@ -49,7 +49,7 @@ export const DeliveriesPanel: React.FC<DeliveriesPanelProps> = ({ deliveries }) 
 
                 <div className="text-right shrink-0">
                   <span className="text-xs font-extrabold text-emerald-600 font-mono">
-                    ${Number(del.total_value).toFixed(2)}
+                    GH₵{Number(del.total_value).toFixed(2)}
                   </span>
                   <div className="text-[10px] text-slate-400 font-mono mt-0.5">
                     {formatTime(del.delivered_at)}
