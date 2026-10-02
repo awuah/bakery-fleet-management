@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Vehicle, Customer, Product, MasterStock } from '../types/bakery';
 import {
@@ -76,6 +76,30 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     initial_stock: 50,
     low_stock_threshold: 20,
   });
+
+  const [availableCategories, setAvailableCategories] = useState<string[]>([
+    'Bread',
+    'Pastry',
+    'Rolls',
+    'Buns',
+    'Cakes',
+    'Specialty',
+  ]);
+
+  useEffect(() => {
+    supabase
+      .from('bk_categories')
+      .select('name')
+      .order('name')
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const names = Array.from(
+            new Set([...data.map((d) => d.name), ...products.map((p) => p.category)])
+          ).filter(Boolean);
+          setAvailableCategories(names);
+        }
+      });
+  }, [products]);
 
   const [isStockAdjustModalOpen, setIsStockAdjustModalOpen] = useState(false);
   const [adjustingStockItem, setAdjustingStockItem] = useState<{ product: Product; currentQty: number } | null>(null);
@@ -1243,11 +1267,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
                   >
-                    <option value="Bread">Bread</option>
-                    <option value="Pastry">Pastry</option>
-                    <option value="Specialty">Specialty</option>
-                    <option value="Rolls">Rolls</option>
-                    <option value="Buns">Buns</option>
+                    {availableCategories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

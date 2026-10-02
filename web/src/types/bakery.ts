@@ -8,6 +8,13 @@ export interface Product {
   created_at?: string;
 }
 
+export interface ProductCategory {
+  id: string;
+  name: string;
+  description?: string;
+  created_at?: string;
+}
+
 export interface MasterStock {
   id: string;
   product_id: string;
